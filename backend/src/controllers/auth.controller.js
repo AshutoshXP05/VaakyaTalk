@@ -62,15 +62,15 @@ const signUp = asyncHandler(async (req, res) => {
 
     try {
         await upsertStreamUser({
-        id: user._id.toString(),
-        name: user.userName,
-        image: user.profilePic || ""
-    }) ;
-    console.log(`Stream user upserted successfully ${user.userName}`);
-    
+            id: user._id.toString(),
+            name: user.userName,
+            image: user.profilePic || ""
+        });
+        console.log(`Stream user upserted successfully ${user.userName}`);
+
     } catch (error) {
         console.log("Error upserting Stream user: ", error);
-        
+
     }
 
 
@@ -111,7 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Password is not correct ")
     }
 
-    const {accessToken, refreshToken} = await generateAccessandRefreshToken(user._id);
+    const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -174,9 +174,48 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 
+const onBoarding = asyncHandler(async (req, res) => {
+    const user = req.user._id;
+
+    const { userName, bio, nativeLanguage, learningLanguage, location } = req.body;
+
+    if (!userName || !bio || !nativeLanguage || !learningLanguage || !location) {
+        return res.status(400).json({
+            message: "All fields are required",
+            missingFields: [
+                !userName && "userName",
+                !bio && "bio",
+                !nativeLanguage && "nativeLanguage",
+                !learningLanguage && "learningLanguage",
+                !location && "location"
+            ].filter(Boolean),
+        });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        user,
+        {
+            ...req.body,
+            isOnboarded: true
+        },
+        { new: true }
+    );
+
+    if (!updatedUser) {
+        throw new ApiError(400, "Failed to update user during onboarding");
+    }
+
+    return res.status(201).json(
+        new ApiResponse(200, updatedUser, "User onboarded successfully")
+    );
+});
+
+
+
 export {
     signUp,
     loginUser,
-    logoutUser
+    logoutUser,
+    onBoarding
 
 }
