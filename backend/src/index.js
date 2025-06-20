@@ -2,6 +2,8 @@ import express from 'express';
 import "dotenv/config";
 import connectDB from './lib/db.js';
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
+import chatRoutes from './routes/chat.routes.js';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ limit: "16kb", extended: true }))
 app.use(cookieParser())
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 
 connectDB()

@@ -1,22 +1,33 @@
-import {StreamChat} from 'stream-chat';
+import { StreamChat } from 'stream-chat';
 import "dotenv/config"
 import { asyncHandler } from '../utils/asyncHandler.js';
 
 const apiKey = process.env.STREAM_API_KEY
 const apiSecret = process.env.STREAM_API_SECRET;
 
-if ( !apiKey || !apiSecret ) {
+if (!apiKey || !apiSecret) {
     throw new Error("STREAM_API_KEY or STREAM_API_SECRET is missing");
 }
 
 const streamClient = StreamChat.getInstance(apiKey, apiSecret);
 
-export const upsertStreamUser = asyncHandler ( async (userData) => {
+export const upsertStreamUser = asyncHandler(async (userData) => {
     await streamClient.upsertUser(userData);
     return userData;
 });
 
 
-// export const generateStreamToken = ( userId ) => {} ;
+export const generateStreamToken = (userId) => {
+    try {
+        // ensure userId is a string
+        const userIdStr = userId.toString();
+        return streamClient.createToken(userIdStr);
+
+    }
+    catch (error) {
+        console.log("Error generating Stream token:", error);
+
+    }
+};
 
 

@@ -18,5 +18,10 @@ router.post('/logout', verifyJWT, logoutUser)
 
 router.post('/onboarding', verifyJWT, onBoarding)
 
+// check if user is logged in or not 
+router.get('/me', verifyJWT, (req, res) => {
+    res.status(200).json({ success : true, user: req.user });
+})
+
 
 export default router;

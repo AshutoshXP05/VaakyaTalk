@@ -199,10 +199,24 @@ const onBoarding = asyncHandler(async (req, res) => {
             isOnboarded: true
         },
         { new: true }
-    );
+    ).select("-password -refreshToken");
 
     if (!updatedUser) {
         throw new ApiError(400, "Failed to update user during onboarding");
+    }
+
+    try {
+        await upsertStreamUser({
+        id: updatedUser._id.toString(),
+        name: updatedUser.userName,
+        image: updatedUser.profilePic || ""
+    });
+    console.log(`Stream user upserted successfully during onboarding: ${updatedUser.userName}`);
+    
+    } catch (streamError) {
+        console.error("Error upserting Stream user during onboarding: ", streamError);
+        throw new ApiError(500, "Failed to update Stream user during onboarding");
+        
     }
 
     return res.status(201).json(
