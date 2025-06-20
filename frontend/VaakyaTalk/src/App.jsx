@@ -7,13 +7,35 @@ import NotificationPage from "./pages/NotificationPage.jsx"
 import OnboardingPage from "./pages/OnboardingPage.jsx"
 import SignUpPage from "./pages/SignUpPage.jsx"
 import toast, { Toaster } from "react-hot-toast"
+import { useQuery } from "@tanstack/react-query"
+import { axiosInstance } from "./lib/axios.js"
 
 
 function App() {
+
+  // delete => post put delete 
+  // get => get 
+
+    const {data, isLoading, error } = useQuery({
+    queryKey: ["todos"],
+
+    queryFn: async () => {
+      const response = await axiosInstance.get("/auth/me")
+      // const data = await response.json()
+      return response.data;
+    }, 
+    retry: false, // console error single time 
+    })
+
+    console.log(data);
+    console.log({isLoading});
+    console.log({error});
+
   return (
     <div className="h-screen" data-theme="forest">
  
       <button onClick={ () => toast.success("Hello Ashutosh")}> Click Button</button>
+
        
     <Routes>
 
