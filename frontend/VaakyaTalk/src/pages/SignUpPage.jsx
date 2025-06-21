@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
 import { Link, Navigate} from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "../lib/axios.js";
+import { signup } from "../lib/api.js";
 
 // import useSignUp from "../hooks/useSignUp";
 
@@ -15,35 +15,18 @@ const SignUpPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: async () => {
-      const response = await axiosInstance.post("/auth/signup", signupData);
-     
-      return response.data;
-    },
+  const { mutate:signupMutation, isPending, error } = useMutation({
+    mutationFn: signup,
     onSuccess: () => {
        queryClient.invalidateQueries({ queryKey: ["authUser"] });
        Navigate("/"); 
   },
   });
 
-  // This is how we did it at first, without using our custom hook
-  // const queryClient = useQueryClient();
-  // const {
-  //   mutate: signupMutation,
-  //   isPending,
-  //   error,
-  // } = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
-  // This is how we did it using our custom hook - optimized version
-  // const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = (e) => {
     e.preventDefault();
-    mutate();
+    signupMutation(signupData);
     // signupMutation(signupData);
   };
 
@@ -63,12 +46,12 @@ const SignUpPage = () => {
             </span>
           </div>
 
-          {/* ERROR MESSAGE IF ANY
+          {/* ERROR MESSAGE IF ANY */}
           {error && (
             <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+              <span>{error.response?.data?.message || "Something went wrong"}</span>
             </div>
-          )} */}
+          )}
 
           <div className="w-full">
             <form onSubmit={handleSignup}>
@@ -140,18 +123,18 @@ const SignUpPage = () => {
                 </div>
 
                 <button className="btn btn-primary w-full" type="submit">
-                  {/* {isPending ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Loading...
-                    </>
-                  ) : (
-                    "Create Account"
-                  )} */}
-                  {isPending ? "Signing Up..." : "Create Account"}
+                 {isPending ? (
+                   <>
+                    <span className="loading loading-spinner loading-xs"></span>
+                    Loading...
+                   </>
+                 ) : 
+                 (
+                   "Create Account"
+                 )}
                 </button>
 
-                <div className="text-center mt-4">
+                 <div className="text-center mt-4">
                   <p className="text-sm">
                     Already have an account?{" "}
                     <Link to="/login" className="text-primary hover:underline">
