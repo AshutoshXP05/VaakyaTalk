@@ -8,7 +8,7 @@ import {
     getrecommendedUsers,
     sendFriendRequest
 } from '../controllers/user.controller.js';
-
+ 
 const router = express.Router();
 
 // apply auth middleware to all routes
