@@ -6,9 +6,10 @@ import LoginPage from "./pages/LoginPage.jsx";
 import NotificationPage from "./pages/NotificationPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
-import  { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
+import Layout from "./components/Layout.jsx";
 
 function App() {
   const { isLoading, authUser } = useAuthUser();
@@ -19,7 +20,7 @@ function App() {
   if (isLoading) return <PageLoader />;
 
   return (
-    <div className="h-screen" data-theme="holloween">
+    <div className="h-screen" data-theme="halloween">
       {/* <button onClick={() => toast.success("Hello Ashutosh")}> Click Button</button> */}
 
       <Routes>
@@ -27,7 +28,9 @@ function App() {
           path="/"
           element={
             isAuthenticated && isOnboarded ? (
-              <HomePage />
+              <Layout showSidebar={true}>
+                <HomePage />
+              </Layout>
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
             )
@@ -54,7 +57,13 @@ function App() {
         <Route
           path="/notification"
           element={
-            isAuthenticated ? <NotificationPage /> : <Navigate to="/login" />
+            isAuthenticated ? (
+              <Layout showSidebar={true}>
+                <NotificationPage />
+              </Layout>
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
         <Route
