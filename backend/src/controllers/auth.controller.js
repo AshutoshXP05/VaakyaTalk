@@ -84,11 +84,23 @@ const signUp = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Something went wrong while signUp the user ")
     }
 
-    return res.status(201).json(
-        new ApiResponse(200, createUser, "User Created Successfully")
-    )
+    const { accessToken, refreshToken } = await generateAccessandRefreshToken(user._id);
 
-})
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    return res
+        .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User Created Successfully"));
+});
 
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -207,16 +219,16 @@ const onBoarding = asyncHandler(async (req, res) => {
 
     try {
         await upsertStreamUser({
-        id: updatedUser._id.toString(),
-        name: updatedUser.userName,
-        image: updatedUser.profilePic || ""
-    });
-    console.log(`Stream user upserted successfully during onboarding: ${updatedUser.userName}`);
-    
+            id: updatedUser._id.toString(),
+            name: updatedUser.userName,
+            image: updatedUser.profilePic || ""
+        });
+        console.log(`Stream user upserted successfully during onboarding: ${updatedUser.userName}`);
+
     } catch (streamError) {
         console.error("Error upserting Stream user during onboarding: ", streamError);
         throw new ApiError(500, "Failed to update Stream user during onboarding");
-        
+
     }
 
     return res.status(201).json(
