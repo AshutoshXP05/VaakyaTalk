@@ -10,9 +10,12 @@ import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
+import { useThemeStore } from "./store/useThemeStore.js";
 
 function App() {
   const { isLoading, authUser } = useAuthUser();
+
+   const {theme} = useThemeStore()
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
@@ -20,7 +23,7 @@ function App() {
   if (isLoading) return <PageLoader />;
 
   return (
-    <div className="h-screen" data-theme="halloween">
+    <div className="h-screen" data-theme={theme}>
       {/* <button onClick={() => toast.success("Hello Ashutosh")}> Click Button</button> */}
 
       <Routes>
