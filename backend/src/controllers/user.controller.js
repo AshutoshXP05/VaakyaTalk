@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { FriendRequest } from "../models/friendRequest.model.js";
+import { ApiError } from "../utils/ApiError.js";
 
 const getrecommendedUsers = asyncHandler(async (req, res) => {
     const currentUserId = req.user._id;
@@ -84,7 +85,7 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
     }
 
     // Verify that the current user is the recipient of the request
-    if ( friendRequest.recipient.toString() !== req.user._id) {
+    if ( friendRequest.recipient.toString() !==  req.user._id.toString()) {
         throw new ApiError(403, "You are not authorized to accept this friend request");
     }
 
