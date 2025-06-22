@@ -50,8 +50,8 @@ const signUp = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email already exists, please use a different one");
     }
 
-    const index = Math.floor(Math.random() * 100) + 1;   // generate a number between [1,100]
-    const randomAvatar = `https://avatar.iran.liara.run/public/${index}.png`
+    const index = Math.floor(Math.random() * 100000) + 1;   // generate a number between [1,1000000]
+    const randomAvatar = `https://api.dicebear.com/7.x/adventurer-neutral/png?seed=${index}`
 
     const user = await User.create({
         userName,

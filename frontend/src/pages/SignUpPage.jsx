@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
-import { Link, Navigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signup } from "../lib/api.js";
-
-// import useSignUp from "../hooks/useSignUp";
 
 const SignUpPage = () => {
   const [signupData, setSignupData] = useState({
@@ -14,31 +12,27 @@ const SignUpPage = () => {
   });
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate(); // ✅ Correctly use useNavigate
 
-  const { mutate:signupMutation, isPending, error } = useMutation({
+  const { mutate: signupMutation, isPending, error } = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-       queryClient.invalidateQueries({ queryKey: ["authUser"] });
-       Navigate("/"); 
-  },
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      navigate("/"); // ✅ Correct way to navigate programmatically
+    },
   });
-
 
   const handleSignup = (e) => {
     e.preventDefault();
     signupMutation(signupData);
-    // signupMutation(signupData);
   };
 
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme="halloween"
-    >
+    <div className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8" data-theme="halloween">
       <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
-        {/* SIGNUP FORM - LEFT SIDE */}
+        
+        {/* LEFT FORM SIDE */}
         <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
-          {/* LOGO */}
           <div className="mb-4 flex items-center justify-start gap-2">
             <ShipWheelIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
@@ -46,7 +40,7 @@ const SignUpPage = () => {
             </span>
           </div>
 
-          {/* ERROR MESSAGE IF ANY */}
+          {/* ERROR DISPLAY */}
           {error && (
             <div className="alert alert-error mb-4">
               <span>{error.response?.data?.message || "Something went wrong"}</span>
@@ -64,20 +58,21 @@ const SignUpPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {/* FULLNAME */}
+                  {/* FULL NAME */}
                   <div className="form-control w-full">
                     <label className="label">
                       <span className="label-text">Full Name</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="FullName"
+                      placeholder="Full Name"
                       className="input input-bordered w-full"
                       value={signupData.userName}
                       onChange={(e) => setSignupData({ ...signupData, userName: e.target.value })}
                       required
                     />
                   </div>
+
                   {/* EMAIL */}
                   <div className="form-control w-full">
                     <label className="label">
@@ -92,6 +87,7 @@ const SignUpPage = () => {
                       required
                     />
                   </div>
+
                   {/* PASSWORD */}
                   <div className="form-control w-full">
                     <label className="label">
@@ -110,6 +106,7 @@ const SignUpPage = () => {
                     </p>
                   </div>
 
+                  {/* TERMS AGREEMENT */}
                   <div className="form-control">
                     <label className="label cursor-pointer justify-start gap-2">
                       <input type="checkbox" className="checkbox checkbox-sm" required />
@@ -122,19 +119,19 @@ const SignUpPage = () => {
                   </div>
                 </div>
 
+                {/* SUBMIT BUTTON */}
                 <button className="btn btn-primary w-full" type="submit">
-                 {isPending ? (
-                   <>
-                    <span className="loading loading-spinner loading-xs"></span>
-                    Loading...
-                   </>
-                 ) : 
-                 (
-                   "Create Account"
-                 )}
+                  {isPending ? (
+                    <>
+                      <span className="loading loading-spinner loading-xs"></span>
+                      Loading...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
                 </button>
 
-                 <div className="text-center mt-4">
+                <div className="text-center mt-4">
                   <p className="text-sm">
                     Already have an account?{" "}
                     <Link to="/login" className="text-primary hover:underline">
@@ -147,14 +144,12 @@ const SignUpPage = () => {
           </div>
         </div>
 
-        {/* SIGNUP FORM - RIGHT SIDE */}
+        {/* RIGHT ILLUSTRATION SIDE */}
         <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/10 items-center justify-center">
           <div className="max-w-md p-8">
-            {/* Illustration */}
             <div className="relative aspect-square max-w-sm mx-auto">
               <img src="Chatting-rafiki.png" alt="Language connection illustration" className="w-full h-full" />
             </div>
-
             <div className="text-center space-y-3 mt-6">
               <h2 className="text-xl font-semibold">Connect with language partners worldwide</h2>
               <p className="opacity-70">

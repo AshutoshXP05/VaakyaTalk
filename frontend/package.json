@@ -23,6 +23,7 @@
     "stream-chat": "^9.8.0",
     "stream-chat-react": "^13.2.0",
     "tailwindcss": "^4.1.10",
+    "vaakyatalk": "file:..",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

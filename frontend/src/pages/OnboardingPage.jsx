@@ -39,8 +39,9 @@ function OnboardingPage() {
   }
 
   const handleRandomAvatar = () => {
-     const idx = Math.floor(Math.random() * 99) + 1; 
-     const randomAvatarUrl = `https://avatar.iran.liara.run/public/${idx}.png`;
+     const idx = Math.floor(Math.random() * 100000) + 1; 
+    //  const randomAvatarUrl = `https://avatar.iran.liara.run/public/${idx}.png`;
+     const randomAvatarUrl = `https://api.dicebear.com/7.x/adventurer-neutral/png?seed=${idx}`;
 
      setFormState({...formState, profilePic: randomAvatarUrl});
      toast.success("Random profile picture generated successfully");
